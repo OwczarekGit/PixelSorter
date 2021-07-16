@@ -34,7 +34,6 @@ namespace PixelSorter
 
             var pixels = image.GetPixels();
             
-            float target = pixels.Count();
             foreach (var pixel in pixels)
             {
                 var tmp = new Color(pixel);
