@@ -33,9 +33,7 @@ namespace PixelSorter
             List<ColorGroup> pixelFrequency = new List<ColorGroup>();
 
             var pixels = image.GetPixels();
-            byte percentage = 0;
             
-            float current = 0;
             float target = pixels.Count();
             foreach (var pixel in pixels)
             {
@@ -62,9 +60,6 @@ namespace PixelSorter
                 {
                     pixelFrequency[matchIndex].count++;
                 }
-
-                current++;
-                //Console.WriteLine($"{(current/target)*100}%");
             }
 
             pixelFrequency.Sort();
