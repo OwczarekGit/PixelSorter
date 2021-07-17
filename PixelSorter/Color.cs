@@ -1,5 +1,4 @@
 using System;
-using ImageMagick;
 
 namespace PixelSorter
 {
@@ -16,16 +15,30 @@ namespace PixelSorter
             this.b = b;
         }
 
-        public Color(IPixel<byte> pixel)
+        public Color(SFML.Graphics.Color color)
+        {
+            this.r = color.R;
+            this.g = color.G;
+            this.b = color.B;
+        }
+
+        // Legacy thing when ImageMagick was used.
+        /*public Color(IPixel<byte> pixel)
         {
             this.r = pixel.GetChannel(0);
             this.g = pixel.GetChannel(1);
             this.b = pixel.GetChannel(2);
-        }
+        }*/
 
-        public bool isTheSame(Color other)
+        public bool isSameGroup(Color other)
         {
-            if (r == other.r && g == other.g && b == other.b)
+            uint threshold = 16;
+            
+            uint diffR = (uint)Math.Abs(r - other.r);
+            uint diffG = (uint)Math.Abs(g - other.g);
+            uint diffB = (uint)Math.Abs(b - other.b);
+            
+            if (diffR <= threshold && diffG <= threshold && diffB <= threshold)
                 return true;
 
             return false;
