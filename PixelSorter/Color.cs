@@ -49,9 +49,16 @@ namespace PixelSorter
             return $"R: {r}, G: {g}, B: {b}";
         }
         
-        public string getRGB()
+        public string getRGB(bool raw)
         {
-            return $"({r}, {g}, {b})";
+            if (raw)
+            {
+                return $"{r} {g} {b}";
+            }
+            else
+            {
+                return $"rgb({r}, {g}, {b})";
+            }
         }
 
         public string getHex(bool raw)

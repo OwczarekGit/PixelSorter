@@ -36,13 +36,27 @@ namespace PixelSorter
             this.size = size;
             this.color = new SFML.Graphics.Color(color.r, color.g, color.b);
             colorData = color;
+
+            switch (Program.outputType)
+            {
+                case Program.OutputTypes.HEX:
+                { 
+                    this.text.DisplayedString = colorData.getHex(Program.rawFormat);
+                    break;
+                }
+                case Program.OutputTypes.RGB:
+                {
+                    this.text.DisplayedString = colorData.getRGB(Program.rawFormat);
+                    break;
+                }
+                
+            }
             
-            this.text.DisplayedString = colorData.getHex(false);
-            this.text.CharacterSize = 18;
+            this.text.CharacterSize = (uint) (200/text.DisplayedString.Length)-2;
             this.text.FillColor = SFML.Graphics.Color.White;
             this.text.OutlineColor = SFML.Graphics.Color.Black;
             this.text.OutlineThickness = 1;
-            this.text.Position = new Vector2f(9+position.X+size.X/2, 25);
+            this.text.Position = new Vector2f(text.CharacterSize/2+position.X+size.X/2, 12);
             this.text.Rotation = (float) (90);
             this.text.Font = this.font;
 
@@ -67,8 +81,23 @@ namespace PixelSorter
 
         public string copyToClipboard()
         {
-            TextCopy.ClipboardService.SetText($"{colorData.getHex(true)}");
-            return $"{colorData.getHex(true)}";
+            switch (Program.outputType)
+            {
+                case Program.OutputTypes.HEX:
+                {
+                    TextCopy.ClipboardService.SetText($"{colorData.getHex(Program.rawFormat)}");
+                    return colorData.getHex(Program.rawFormat);
+                    break;
+                }
+                case Program.OutputTypes.RGB:
+                {
+                    TextCopy.ClipboardService.SetText($"{colorData.getRGB(Program.rawFormat)}");
+                    return colorData.getRGB(Program.rawFormat);
+                    break;
+                }
+            }
+            
+            return colorData.getHex(Program.rawFormat);
         }
     }
 }

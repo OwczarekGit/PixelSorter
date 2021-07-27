@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Security;
 using SFML.Graphics;
 using SFML.System;
@@ -9,19 +10,30 @@ namespace PixelSorter
 {
     class Program
     {
+        public enum OutputTypes
+        {
+            RGB,
+            HEX,
+        }
+        
+        public static bool createPickerWindow = true;
+        public static bool rawFormat = true;
+        public static OutputTypes outputType= OutputTypes.HEX;
+        public static int outputColorsCount = 16;
+        
         static void Main(string[] args)
         {
-            if (args.Length < 1)
-            {
-                Console.WriteLine("You need to specify the image path!");
-                return; 
-            }
+            var argParser = new ArgumentParser(args);
+            int parserResult = argParser.process();
 
-            Image image;
+            if (parserResult != 0)
+                return;
+
+            SFML.Graphics.Image image;
 
             try
             {
-                image = new Image(args[0]);
+                image = new SFML.Graphics.Image(args[0]);
             }
             catch (Exception e)
             {
@@ -87,12 +99,44 @@ namespace PixelSorter
 
                 pixelFrequency.Sort();
 
-                int sliceSize = 16;
-                slice = pixelFrequency.GetRange(pixelFrequency.Count - sliceSize, sliceSize);
+                int sliceSize = outputColorsCount;
+                try
+                {
+                    slice = pixelFrequency.GetRange(pixelFrequency.Count - sliceSize, sliceSize);
+                }
+                catch
+                {
+                    slice = pixelFrequency.GetRange(0, pixelFrequency.Count);
+                }
+                
+                // Force to do some cleaning.
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
             }
-            DisplayWindow result = new DisplayWindow(slice);
+
+            if (createPickerWindow)
+            {
+                DisplayWindow result = new DisplayWindow(slice);
+            }
+            else
+            {
+                foreach (var color in slice)
+                {
+                    switch (outputType)
+                    {
+                        case OutputTypes.HEX:
+                        {
+                            Console.WriteLine(color.color.getHex(rawFormat));
+                            break;
+                        }
+                        case OutputTypes.RGB:
+                        {
+                            Console.WriteLine(color.color.getRGB(rawFormat));
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }
